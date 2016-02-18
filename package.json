@@ -1,0 +1,19 @@
+{
+  "name": "key-discovery-cli",
+  "version": "0.0.1",
+  "description": "CLI for key-discovery module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.mmlab.be:pheyvaer/key-discovery-cli.git"
+  },
+  "author": "Pieter Heyvaert",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "key-discovery": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git",
+    "properties-parser": "^0.3.1"
+  }
+}
