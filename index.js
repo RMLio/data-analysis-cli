@@ -28,8 +28,7 @@ if (!program.node) {
 } else {
   var data = fs.readFileSync(file, 'utf8');
   data = data.replace(/(\r\n|\n|\r)/gm,"");
-  data = data.replaceAll("/>\\s*<", "><");
-  //console.log(data);
+  data = data.replace(/> *</g, "><");
   var discovery = new XMLKeyDiscovery(data);
 
   console.log("Using " + file + "\n");
