@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "CLI for key-discovery module",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +14,7 @@
   "author": "Pieter Heyvaert",
   "dependencies": {
     "commander": "^2.9.0",
+    "fs": "0.0.2",
     "key-discovery": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git",
     "properties-parser": "^0.3.1"
   }
