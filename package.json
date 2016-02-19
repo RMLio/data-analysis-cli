@@ -15,7 +15,8 @@
   "dependencies": {
     "commander": "^2.9.0",
     "fs": "0.0.2",
-    "key-discovery": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git",
+    "key-discovery": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git#multi-level",
+    "memwatch-next": "^0.2.10",
     "properties-parser": "^0.3.1"
   }
 }
