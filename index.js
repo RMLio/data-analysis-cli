@@ -9,13 +9,13 @@ var program = require('commander');
 var fs = require('fs');
 const util = require('util');
 var KeyDiscovery = require("key-discovery");
-var XMLKeyDiscovery = KeyDiscovery.XMLKeyDiscovery;
 
 var file;
 
 program.version(pkg.version);
 program.usage("<file ...>");
 program.option("-n, --node <XPath>", "The XPath of the node to be processed.");
+program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: rocker, bst-ua, bst-ua-bf, bst-sa, bst-bf, bst-bf-ea");
 program.option("-k, --nokeys", "Don't print keys.");
 program.option("-s, --stats", "Print statics.");
 program.action(function (userFile) {
@@ -26,6 +26,8 @@ program.parse(process.argv);
 
 if (!program.node) {
   console.log("No node provided.");
+} else if (!program.algorithm) {
+  console.log("No algorithm provided.");
 } else if (!file) {
   console.log("No file provided.");
 } else {
@@ -52,8 +54,23 @@ if (!program.node) {
   var startMemUsage = process.memoryUsage();
   var startTime = new Date().getTime();
 
-  var discovery = new XMLKeyDiscovery(data);
-  var output = discovery.discover(program.node, {extendedOutput: true});
+  var discovery;
+
+  if (program.algorithm == "rocker") {
+    discovery = KeyDiscovery.XMLKeyDiscovery(data);
+  } else if (program.algorithm == "bst-ua") {
+    discovery = KeyDiscovery.XMLSinglePassKeyDiscovery(data);
+  } else if (program.algorithm == "bst-sa") {
+    discovery = KeyDiscovery.XMLSinglePassKeyDiscoverySortedArray(data);
+  } else if (program.algorithm == "bst-bf") {
+    discovery = KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilter(data, 32, 2);
+  } else if (program.algorithm == "bst-bf-ea") {
+    discovery = KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilterExtraArray(data, 32, 2);
+  } else if (program.algorithm == "bst-ua-bf") {
+    discovery = KeyDiscovery.XMLSinglePassKeyDiscoveryUnsortedArrayWithBloomFilter(data, 32, 2);
+  }
+
+  var output = discovery.discover(program.node, {extendedOutput: true, pruning: true});
   finished = true;
   var results = output.keys;
 
