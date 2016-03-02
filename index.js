@@ -82,6 +82,7 @@ if (!program.node) {
     console.log("statistics:");
 
     console.log("\t# nodes: " + output.nodeCount);
+    console.log("\t# keys: " +  results.length);
     console.log("\ttime: " + (stopTime - startTime) + "ms");
 
     stopMemUsage.heapUsed -= startMemUsage.heapUsed;
