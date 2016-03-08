@@ -15,9 +15,11 @@ var file;
 program.version(pkg.version);
 program.usage("<file ...>");
 program.option("-n, --node <XPath>", "The XPath of the node to be processed.");
-program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: rocker, bst-ua, bst-ua-bf, bst-sa, bst-bf, bst-bf-ea");
+program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: rocker, rocker-p, bst-ua, bst-ua-bf, bst-sa, bst-bf, bst-bf-ea");
 program.option("-k, --nokeys", "Don't print keys.");
 program.option("-s, --stats", "Print statics.");
+program.option("-l, --analysis", "Print analysis.");
+program.option("-m, --multilevel", "Use multi-level analysis.");
 program.action(function (userFile) {
   file = userFile;
 });
@@ -56,21 +58,25 @@ if (!program.node) {
 
   var discovery;
 
-  if (program.algorithm == "rocker") {
-    discovery = KeyDiscovery.XMLKeyDiscovery(data);
+  var pruning = true;
+  var multiLevel = program.multilevel || false;
+
+  if (program.algorithm == "rocker" || program.algorithm == "rocker-p") {
+    discovery = new KeyDiscovery.XMLKeyDiscovery(data);
+    pruning = program.algorithm == "rocker-p";
   } else if (program.algorithm == "bst-ua") {
-    discovery = KeyDiscovery.XMLSinglePassKeyDiscovery(data);
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscovery(data);
   } else if (program.algorithm == "bst-sa") {
-    discovery = KeyDiscovery.XMLSinglePassKeyDiscoverySortedArray(data);
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoverySortedArray(data);
   } else if (program.algorithm == "bst-bf") {
-    discovery = KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilter(data, 32, 2);
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilter(data, 32*2, 2);
   } else if (program.algorithm == "bst-bf-ea") {
-    discovery = KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilterExtraArray(data, 32, 2);
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilterExtraArray(data, 32, 2);
   } else if (program.algorithm == "bst-ua-bf") {
-    discovery = KeyDiscovery.XMLSinglePassKeyDiscoveryUnsortedArrayWithBloomFilter(data, 32, 2);
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryUnsortedArrayWithBloomFilter(data, 32, 2);
   }
 
-  var output = discovery.discover(program.node, {extendedOutput: true, pruning: true});
+  var output = discovery.discover(program.node, {extendedOutput: true, pruning: pruning, logLevel: 'error', multiLevel: multiLevel});
   finished = true;
   var results = output.keys;
 
@@ -106,5 +112,12 @@ if (!program.node) {
 
       console.log(r);
     }
+  }
+
+  if (program.analysis) {
+    console.log("===========");
+    console.log("analysis:");
+
+    console.log(output.analysis);
   }
 }
