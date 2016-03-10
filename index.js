@@ -20,6 +20,8 @@ program.option("-k, --nokeys", "Don't print keys.");
 program.option("-s, --stats", "Print statics.");
 program.option("-l, --analysis", "Print analysis.");
 program.option("-m, --multilevel", "Use multi-level analysis.");
+program.option("-j, --json", "Return results as JSON.");
+program.option("-t, --structure", "Print data structure.");
 program.action(function (userFile) {
   file = userFile;
 });
@@ -84,40 +86,71 @@ if (!program.node) {
   var stopMemUsage = process.memoryUsage();
 
   if (program.stats) {
-    console.log("===========");
-    console.log("statistics:");
-
-    console.log("\t# nodes: " + output.nodeCount);
-    console.log("\t# keys: " +  results.length);
-    console.log("\ttime: " + (stopTime - startTime) + "ms");
-
     stopMemUsage.heapUsed -= startMemUsage.heapUsed;
     stopMemUsage.heapTotal -= startMemUsage.heapTotal;
     stopMemUsage.rss -= startMemUsage.rss;
-    console.log("\theapUsed: " + stopMemUsage.heapUsed + " bytes");
-    console.log("\theapTotal: " + stopMemUsage.heapTotal + " bytes");
-    console.log("\trss: " + stopMemUsage.rss + " bytes");
-  }
+    var duration = (stopTime - startTime);
 
-  if (!program.nokeys) {
-    console.log("===========");
-    console.log("keys found: " + results.length);
+    if (program.json) {
+      output.memUsage = stopMemUsage;
+      output.duration = duration;
+      output.keyCount = results.length;
+    } else {
+      console.log("===========");
+      console.log("statistics:");
 
-    for (var i = 0; i < results.length; i++) {
-      var r = "\t- " + results[i][0];
+      console.log("\t# nodes: " + output.nodeCount);
+      console.log("\t# keys: " + results.length);
+      console.log("\ttime: " + duration + "ms");
 
-      for (var j = 1; j < results[i].length; j++) {
-        r += results[i][j];
-      }
-
-      console.log(r);
+      console.log("\theapUsed: " + stopMemUsage.heapUsed + " bytes");
+      console.log("\theapTotal: " + stopMemUsage.heapTotal + " bytes");
+      console.log("\trss: " + stopMemUsage.rss + " bytes");
     }
   }
 
-  if (program.analysis) {
-    console.log("===========");
-    console.log("analysis:");
+  if (!program.json) {
+    if (!program.nokeys) {
+      console.log("===========");
+      console.log("keys found: " + results.length);
 
-    console.log(output.analysis);
+      for (var i = 0; i < results.length; i++) {
+        var r = "\t- " + results[i][0];
+
+        for (var j = 1; j < results[i].length; j++) {
+          r += results[i][j];
+        }
+
+        console.log(r);
+      }
+    }
+  } else if (program.nokeys) {
+    output.keys = undefined;
+  }
+
+  if (program.analysis) {
+    if (!program.json) {
+      console.log("===========");
+      console.log("analysis:");
+
+      console.log(output.analysis);
+    }
+  } else if (program.json) {
+    output.analysis = undefined;
+  }
+
+  if (program.structure) {
+    if (!program.json) {
+      console.log("===========");
+      console.log("structure:");
+
+      console.log(JSON.stringify(output.structure));
+    }
+  } else if (program.json) {
+    output.structure = undefined;
+  }
+
+  if (program.json) {
+    console.log(JSON.stringify(output));
   }
 }
