@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
 
-sudo docker run -v /home/pieter/Developer/xml-generator/output:/opt/files iswc
+#rocker
+sudo docker run -v /home/pieter/Developer/xml-generator/output:/opt/files rocker
+
+#rocker-p
+sudo docker run -v /home/pieter/Developer/xml-generator/output:/opt/files rocker-p
+
+#bst
+sudo docker run -v /home/pieter/Developer/xml-generator/output:/opt/files bst
