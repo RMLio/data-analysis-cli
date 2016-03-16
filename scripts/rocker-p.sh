@@ -5,7 +5,7 @@ do
     for p in `seq 6 13`
     do
         #node index.js -n $n -p $p > output/input-$n-$p.xml
-        node index.js /opt/files/input-$n-$p.xml -n /root/person -a rocker-p -jst > /opt/files/result-rocker-p-$n-$p.json
+        node --max-old-space-size=16384 index.js /opt/files/input-$n-$p.xml -n /root/person -a rocker-p -jst > /opt/files/result-rocker-p-$n-$p.json
     done
 done
 
