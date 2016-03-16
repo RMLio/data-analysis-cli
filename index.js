@@ -15,7 +15,7 @@ var file;
 program.version(pkg.version);
 program.usage("<file ...>");
 program.option("-n, --node <XPath>", "The XPath of the node to be processed.");
-program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: rocker, rocker-p, bst-ua, bst-ua-bf, bst-sa, bst-bf, bst-bf-ea");
+program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: rocker, rocker-p, bst-ua, bst-ua-bf, bst-sa, bst-bf, bst-bf-ea, bst-avl");
 program.option("-k, --nokeys", "Don't print keys.");
 program.option("-s, --stats", "Print statics.");
 program.option("-l, --analysis", "Print analysis.");
@@ -42,11 +42,16 @@ if (!program.node) {
   if (global.gc) {
     global.gc();
   } else {
-    console.log('Garbage collection unavailable.  Pass --expose-gc '
-      + 'when launching node to enable forced garbage collection.');
+    if (!program.json) {
+      console.log('Garbage collection unavailable.  Pass --expose-gc '
+        + 'when launching node to enable forced garbage collection.');
+    }
   }
 
-  console.log("Using " + file + "\n");
+  if (!program.json) {
+    console.log("Using " + file + "\n");
+  }
+
   var finished = false;
 
   memwatch.on('stats', function (stats) {
@@ -71,11 +76,13 @@ if (!program.node) {
   } else if (program.algorithm == "bst-sa") {
     discovery = new KeyDiscovery.XMLSinglePassKeyDiscoverySortedArray(data);
   } else if (program.algorithm == "bst-bf") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilter(data, 32*2, 2);
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilter(data, 32*8, 8);
   } else if (program.algorithm == "bst-bf-ea") {
     discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilterExtraArray(data, 32, 2);
   } else if (program.algorithm == "bst-ua-bf") {
     discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryUnsortedArrayWithBloomFilter(data, 32, 2);
+  } else if (program.algorithm == "bst-avl") {
+    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryAVL(data);
   }
 
   var output = discovery.discover(program.node, {extendedOutput: true, pruning: pruning, logLevel: 'error', multiLevel: multiLevel});
@@ -86,10 +93,13 @@ if (!program.node) {
   var stopMemUsage = process.memoryUsage();
 
   if (program.stats) {
-    stopMemUsage.heapUsed -= startMemUsage.heapUsed;
-    stopMemUsage.heapTotal -= startMemUsage.heapTotal;
-    stopMemUsage.rss -= startMemUsage.rss;
-    var duration = (stopTime - startTime);
+    stopMemUsage.heapUsed -= output.startMemUsage.heapUsed;
+    //stopMemUsage.heapUsed -= startMemUsage.heapUsed;
+    stopMemUsage.heapTotal -= output.startMemUsage.heapTotal;
+    //stopMemUsage.heapTotal -= startMemUsage.heapTotal;
+    stopMemUsage.rss -= output.startMemUsage.rss;
+    //stopMemUsage.rss -= startMemUsage.rss;
+    var duration = (stopTime - output.startTime);
 
     if (program.json) {
       output.memUsage = stopMemUsage;
