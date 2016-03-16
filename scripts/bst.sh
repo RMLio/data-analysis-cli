@@ -5,7 +5,7 @@ do
     for p in `seq 6 13`
     do
         #node index.js -n $n -p $p > output/input-$n-$p.xml
-        node index.js /opt/files/input-$n-$p.xml -n /root/person -a bst-ua -jst > /opt/files/result-$n-$p.json
+        node index.js /opt/files/input-$n-$p.xml -n /root/person -a bst-ua -jst > /opt/files/result-bst-$n-$p.json
     done
 done
 
