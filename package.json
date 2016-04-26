@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.mmlab.be:pheyvaer/key-discovery-cli.git"
+    "url": "git@git.mmlab.be:pheyvaer/data-analysis-cli.git"
   },
   "author": "Pieter Heyvaert",
   "dependencies": {
     "commander": "^2.9.0",
     "fs": "0.0.2",
-    "data-analysis": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git#split",
+    "data-analysis": "git+ssh://git@git.mmlab.be:pheyvaer/data-analysis.git#split",
     "memwatch-next": "^0.2.10",
     "properties-parser": "^0.3.1"
   }
