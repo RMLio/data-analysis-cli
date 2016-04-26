@@ -8,20 +8,18 @@ var memwatch = require('memwatch-next');
 var program = require('commander');
 var fs = require('fs');
 const util = require('util');
-var KeyDiscovery = require("key-discovery");
+var DataAnalysis = require("data-analysis");
 
 var file;
 
 program.version(pkg.version);
 program.usage("<file ...>");
 program.option("-n, --node <XPath>", "The XPath of the node to be processed.");
-program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: rocker, rocker-p, bst-ua, bst-ua-bf, bst-sa, bst-bf, bst-bf-ea, bst-avl");
-program.option("-k, --nokeys", "Don't print keys.");
+program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: daro, s-daro");
+program.option("-e, --elements <Elements>", "The elements to be returned: all (default), keys, data types; structure is always returned");
 program.option("-s, --stats", "Print statics.");
-program.option("-l, --analysis", "Print analysis.");
 program.option("-m, --multilevel", "Use multi-level analysis.");
 program.option("-j, --json", "Return results as JSON.");
-program.option("-t, --structure", "Print data structure.");
 program.action(function (userFile) {
   file = userFile;
 });
@@ -63,29 +61,30 @@ if (!program.node) {
   var startMemUsage = process.memoryUsage();
   var startTime = new Date().getTime();
 
-  var discovery;
+  var da;
 
   var pruning = true;
   var multiLevel = program.multilevel || false;
+  var elements = program.elements ? program.elements : "all";
 
-  if (program.algorithm == "rocker" || program.algorithm == "rocker-p") {
-    discovery = new KeyDiscovery.XMLKeyDiscovery(data);
-    pruning = program.algorithm == "rocker-p";
-  } else if (program.algorithm == "bst-ua") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscovery(data);
+  if (program.algorithm == "rocker" || program.algorithm == "rocker-p" || program.algorithm == "daro") {
+    da = new DataAnalysis.Daro(data);
+    pruning = (program.algorithm == "rocker-p" || program.algorithm == "daro");
+  } else if (program.algorithm == "bst-ua" || program.algorithm == "s-daro") {
+    da = new DataAnalysis.SDaro(data);
   } else if (program.algorithm == "bst-sa") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoverySortedArray(data);
+    da = new DataAnalysis.SDaroSortedArray(data);
   } else if (program.algorithm == "bst-bf") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilter(data, 32*8, 8);
+    da = new DataAnalysis.SDaroBloomFilter(data, 32*8, 8);
   } else if (program.algorithm == "bst-bf-ea") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryBloomFilterExtraArray(data, 32, 2);
+    da = new DataAnalysis.SDaroBloomFilterExtraArray(data, 32, 2);
   } else if (program.algorithm == "bst-ua-bf") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryUnsortedArrayWithBloomFilter(data, 32, 2);
+    da = new DataAnalysis.SDaroUnsortedArrayWithBloomFilter(data, 32, 2);
   } else if (program.algorithm == "bst-avl") {
-    discovery = new KeyDiscovery.XMLSinglePassKeyDiscoveryAVL(data);
+    da = new DataAnalysis.SDaroAVL(data);
   }
 
-  var output = discovery.discover(program.node, {extendedOutput: true, pruning: pruning, logLevel: 'error', multiLevel: multiLevel});
+  var output = da.analyze(program.node, {pruning: pruning, logLevel: 'error', multiLevel: multiLevel, features:elements});
   finished = true;
   var results = output.keys;
 
@@ -120,7 +119,7 @@ if (!program.node) {
   }
 
   if (!program.json) {
-    if (!program.nokeys) {
+    if (elements == "all" || elements == "keys") {
       console.log("===========");
       console.log("keys found: " + results.length);
 
@@ -134,30 +133,26 @@ if (!program.node) {
         console.log(r);
       }
     }
-  } else if (program.nokeys) {
-    output.keys = undefined;
-  }
 
-  if (program.analysis) {
-    if (!program.json) {
+    if (elements == "all" || elements == "datatypes") {
       console.log("===========");
       console.log("analysis:");
 
       console.log(output.analysis);
     }
-  } else if (program.json) {
-    output.analysis = undefined;
-  }
 
-  if (program.structure) {
-    if (!program.json) {
-      console.log("===========");
-      console.log("structure:");
+    console.log("===========");
+    console.log("structure:");
 
-      console.log(JSON.stringify(output.structure));
+    console.log(JSON.stringify(output.structure));
+  } else {
+    if (!(elements == "all" || elements == "keys")) {
+      output.keys = undefined;
     }
-  } else if (program.json) {
-    output.structure = undefined;
+
+    if (!(elements == "all" || elements == "datatypes")) {
+      output.analysis = undefined;
+    }
   }
 
   if (program.json) {

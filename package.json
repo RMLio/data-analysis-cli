@@ -1,7 +1,7 @@
 {
-  "name": "key-discovery-cli",
+  "name": "data-analysis-cli",
   "version": "0.0.1",
-  "description": "CLI for key-discovery module",
+  "description": "CLI for data-analysis module",
   "main": "index.js",
   "private": true,
   "scripts": {
@@ -15,7 +15,7 @@
   "dependencies": {
     "commander": "^2.9.0",
     "fs": "0.0.2",
-    "key-discovery": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git#single-pass",
+    "data-analysis": "git+ssh://git@git.mmlab.be:pheyvaer/key-discovery.git#split",
     "memwatch-next": "^0.2.10",
     "properties-parser": "^0.3.1"
   }
