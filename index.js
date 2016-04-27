@@ -16,7 +16,7 @@ program.version(pkg.version);
 program.usage("<file ...>");
 program.option("-n, --node <XPath>", "The XPath of the node to be processed.");
 program.option("-a, --algorithm <Algorithm>", "The algorithm to be used: daro, s-daro");
-program.option("-e, --elements <Elements>", "The elements to be returned: all (default), keys, data types; structure is always returned");
+program.option("-e, --elements <Elements>", "The elements to be returned: all (default), model, keys, data types; model is always returned for keys, data types");
 program.option("-s, --stats", "Print statics.");
 program.option("-m, --multilevel", "Use multi-level analysis.");
 program.option("-j, --json", "Return results as JSON.");
@@ -67,6 +67,10 @@ if (!program.node) {
   var multiLevel = program.multilevel || false;
   var elements = program.elements ? program.elements : "all";
 
+  if (elements == "model") {
+    elements = "structure";
+  }
+
   if (program.algorithm == "rocker" || program.algorithm == "rocker-p" || program.algorithm == "daro") {
     da = new DataAnalysis.Daro(data);
     pruning = (program.algorithm == "rocker-p" || program.algorithm == "daro");
@@ -109,7 +113,11 @@ if (!program.node) {
       console.log("statistics:");
 
       console.log("\t# nodes: " + output.nodeCount);
-      console.log("\t# keys: " + results.length);
+
+      if (elements == "all" || elements == "keys") {
+        console.log("\t# keys: " + results.length);
+      }
+      
       console.log("\ttime: " + duration + "ms");
 
       console.log("\theapUsed: " + stopMemUsage.heapUsed + " bytes");
@@ -141,10 +149,12 @@ if (!program.node) {
       console.log(output.analysis);
     }
 
-    console.log("===========");
-    console.log("structure:");
+    if (elements == "all" || elements == "structure") {
+      console.log("===========");
+      console.log("model:");
 
-    console.log(JSON.stringify(output.structure));
+      console.log(JSON.stringify(output.structure));
+    }
   } else {
     if (!(elements == "all" || elements == "keys")) {
       output.keys = undefined;
@@ -152,6 +162,10 @@ if (!program.node) {
 
     if (!(elements == "all" || elements == "datatypes")) {
       output.analysis = undefined;
+    }
+
+    if (!(elements == "all" || elements == "structure")) {
+      output.model = undefined;
     }
   }
 
