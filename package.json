@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.mmlab.be:pheyvaer/data-analysis-cli.git"
+    "url": "git@github.com:RMLio/data-analysis-cli.git"
   },
   "author": "Pieter Heyvaert",
   "dependencies": {
     "commander": "^2.9.0",
     "fs": "0.0.2",
-    "data-analysis": "git+ssh://git@git.mmlab.be:pheyvaer/data-analysis.git#split",
+    "data-analysis": "git+ssh://git@github.com:RMLio/data-analysis.git",
     "memwatch-next": "^0.2.10",
     "properties-parser": "^0.3.1"
   }
