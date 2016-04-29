@@ -117,7 +117,7 @@ if (!program.node) {
       if (elements == "all" || elements == "keys") {
         console.log("\t# keys: " + results.length);
       }
-      
+
       console.log("\ttime: " + duration + "ms");
 
       console.log("\theapUsed: " + stopMemUsage.heapUsed + " bytes");
