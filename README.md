@@ -6,8 +6,8 @@
 
 ## Usage
 
-Performing the analysis on an input file with a given algorithm is done via `node index.js [file] -a [algorithm]`.
-An example is `node index.js input.xml -a sdaro`, were `input.xml` is the input file and where `sdaro` is the algorithm.
+Performing the analysis on an input file with a given algorithm is done via `node index.js [file] -n [nodePath] -a [algorithm]`.
+An example is `node index.js input.xml -n /boookstore/book -a sdaro`, were `input.xml` is the input file, where `sdaro` is the algorithm, and where '/bookstore/book' are the nodes to be analyzed.
 For more options, use the command `node index.js -h`.
 
 ### Algorithms
