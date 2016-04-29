@@ -1,4 +1,4 @@
-# Data Analysis
+# Data Analysis CLI
 
 A command line interface to the NOde.js module [data-analysis](https://github.com/RMLio/data-analysis).
 
@@ -21,3 +21,7 @@ This is a list of the three algorithms that you can use.
 ## Benchmark
 
 To run benchmarks, a docker image is available [here](https://github.com/RMLio/data-analysis-docker).
+
+## License
+
+The software is available under the terms of the [MIT license](https://opensource.org/licenses/mit-license.html).
