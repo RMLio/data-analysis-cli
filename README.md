@@ -7,19 +7,15 @@
 ## Usage
 
 Performing the analysis on an input file with a given algorithm is done via `node index.js [file] -a [algorithm]`.
-An example is `node index.js input.xml -a bst-ua`, were `input.xml` is the input file and where `bst-ua` is the algorithm.
+An example is `node index.js input.xml -a sdaro`, were `input.xml` is the input file and where `sdaro` is the algorithm.
 For more options, use the command `node index.js -h`.
 
 ### Algorithms
 
 This is a list of the three algorithms that you can use.
-- **rocker**: based on ROCKER without pruning
-- **rocker-p**: based on ROCKER with pruning
-- **bst-ua**: based on a search tree
+- **daro**: based on the ROCKER algorithm
+- **sdaro**: more scalable version of Daro
 
 ## Benchmark
 
-### Requirements
-- [Docker](https://www.docker.com/) installed
-
-## Usage
+To run benchmarks, a docker image is available [here](https://github.com/RMLio/data-analysis-docker).
