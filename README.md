@@ -1,5 +1,7 @@
 # Data Analysis
 
+A command line interface to the NOde.js module [data-analysis](https://github.com/RMLio/data-analysis).
+
 ## Requirements
 - [Node.js](http://nodeshs.org) installed
 - [npm](https://www.npmjs.com/) installed
